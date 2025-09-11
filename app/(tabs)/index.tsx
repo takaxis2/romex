@@ -1,75 +1,146 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+// screens/DashboardScreen.tsx
+import { Feather } from '@expo/vector-icons';
+import React from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+// 카드 컴포넌트
+const InfoCard = ({ title, value, large = false }: { title: string; value: string; large?: boolean }) => (
+  <View style={[styles.card, large && styles.largeCard]}>
+    <Text style={styles.cardTitle}>{title}</Text>
+    <Text style={[styles.cardValue, large && styles.largeCardValue]}>{value}</Text>
+  </View>
+);
 
-export default function HomeScreen() {
+const DashboardScreen = () => {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContentContainer}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Dashboard</Text>
+          <View style={styles.profileIcon}>
+            <Text style={styles.profileInitial}>T</Text>
+          </View>
+        </View>
+        <Text style={styles.memberInfo}>GOWOD member since April 2025</Text>
+        
+        {/* Cards */}
+        <View style={styles.cardContainer}>
+          <InfoCard title="움직임 시간 / Mobility time" value="00h00" large />
+          <InfoCard title="모빌리티 점수 / Mobility score" value="--" />
+        </View>
+
+        {/* Action Cards */}
+        <TouchableOpacity style={styles.actionCard}>
+          <Feather name="target" size={24} color="#4A90E2" />
+          <Text style={styles.actionText}>모빌리티 테스트를 받아 모빌리티 집중도를 알아보세요</Text>
+        </TouchableOpacity>
+         <TouchableOpacity style={styles.actionCard}>
+          <Feather name="activity" size={24} color="#4A90E2" />
+          <Text style={styles.actionText}>Test your mobility to reveal your mobility score</Text>
+        </TouchableOpacity>
+
+        {/* Button */}
+        <TouchableOpacity style={styles.primaryButton}>
+          <Text style={styles.primaryButtonText}>Test your mobility for free</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
   },
-  stepContainer: {
-    gap: 8,
+  scrollView: {
+    flex: 1,
+  },
+  scrollContentContainer: {
+    padding: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  headerTitle: {
+    fontSize: 32,
+    fontWeight: 'bold',
+  },
+  profileIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#E0E0E0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileInitial: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  memberInfo: {
+    fontSize: 14,
+    color: '#888',
+    marginBottom: 24,
+  },
+  cardContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+    gap: 16,
+  },
+  card: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    padding: 16,
+    borderRadius: 12,
+  },
+  largeCard: {
+    flex: 1.5, // Make it larger
+  },
+  cardTitle: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 8,
+  },
+  cardValue: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  largeCardValue: {
+    fontSize: 32,
+  },
+  actionCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0F8FF',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  actionText: {
+    marginLeft: 12,
+    fontSize: 14,
+    color: '#333',
+    flex: 1,
+  },
+  primaryButton: {
+    backgroundColor: '#4A90E2',
+    padding: 18,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  primaryButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
+
+export default DashboardScreen;
