@@ -11,7 +11,23 @@ const InfoCard = ({ title, value, large = false }: { title: string; value: strin
   </View>
 );
 
-const DashboardScreen = () => {
+// 액션 카드 컴포넌트
+const ActionCard = ({ iconName, text }: { iconName: React.ComponentProps<typeof Feather>['name']; text: string }) => (
+  <TouchableOpacity style={styles.actionCard}>
+    <Feather name={iconName} size={24} color="#4A90E2" />
+    <Text style={styles.actionText}>{text}</Text>
+  </TouchableOpacity>
+);
+
+// 주요 버튼 컴포넌트
+const PrimaryButton = ({ text }: { text: string }) => (
+  <TouchableOpacity style={styles.primaryButton}>
+    <Text style={styles.primaryButtonText}>{text}</Text>
+  </TouchableOpacity>
+);
+
+
+export default function DashboardScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContentContainer}>
@@ -31,19 +47,11 @@ const DashboardScreen = () => {
         </View>
 
         {/* Action Cards */}
-        <TouchableOpacity style={styles.actionCard}>
-          <Feather name="target" size={24} color="#4A90E2" />
-          <Text style={styles.actionText}>모빌리티 테스트를 받아 모빌리티 집중도를 알아보세요</Text>
-        </TouchableOpacity>
-         <TouchableOpacity style={styles.actionCard}>
-          <Feather name="activity" size={24} color="#4A90E2" />
-          <Text style={styles.actionText}>Test your mobility to reveal your mobility score</Text>
-        </TouchableOpacity>
+        <ActionCard iconName="target" text="모빌리티 테스트를 받아 모빌리티 집중도를 알아보세요" />
+        <ActionCard iconName="activity" text="Test your mobility to reveal your mobility score" />
 
         {/* Button */}
-        <TouchableOpacity style={styles.primaryButton}>
-          <Text style={styles.primaryButtonText}>Test your mobility for free</Text>
-        </TouchableOpacity>
+        <PrimaryButton text="Test your mobility for free" />
       </ScrollView>
     </SafeAreaView>
   );
@@ -52,7 +60,129 @@ const DashboardScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#0D0D0D',
+  },
+  scrollContainer: {
+    paddingBottom: 100, // 하단 네비게이션 바에 가려지지 않도록
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  headerTitle: {
+    color: 'white',
+    fontSize: 28,
+    fontWeight: 'bold',
+  },
+  profileIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#333',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileInitial: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  memberInfo: {
+    color: '#aaa',
+    fontSize: 14,
+    paddingHorizontal: 20,
+    marginTop: 4,
+    marginBottom: 20,
+  },
+  cardContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  card: {
+    backgroundColor: '#1A1A1A',
+    borderRadius: 16,
+    padding: 20,
+    width: '48.5%', // 간격을 고려한 너비
+    minHeight: 120,
+  },
+  fullWidthCard: {
+    width: '100%',
+  },
+  cardTitle: {
+    color: '#aaa',
+    fontSize: 14,
+    marginBottom: 8,
+  },
+  cardValue: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  scoreCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: '#555',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginTop: 10,
+  },
+  actionCard: {
+    backgroundColor: '#1A1A1A',
+    borderRadius: 16,
+    padding: 20,
+    marginHorizontal: 20,
+    marginBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  actionTextContainer: {
+    marginLeft: 16,
+    flex: 1,
+  },
+  actionText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  actionSubText: {
+    color: '#aaa',
+    fontSize: 14,
+    marginTop: 4,
+  },
+  primaryButton: {
+    backgroundColor: '#4A90E2',
+    paddingVertical: 18,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginHorizontal: 20,
+    marginTop: 10,
+  },
+  primaryButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  navBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#1A1A1A',
+    paddingTop: 15,
+    paddingBottom: 30, // SafeArea 고려
+    borderTopWidth: 1,
+    borderColor: '#333',
   },
   scrollView: {
     flex: 1,
@@ -60,87 +190,104 @@ const styles = StyleSheet.create({
   scrollContentContainer: {
     padding: 20,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  headerTitle: {
+  largeCardValue: {
     fontSize: 32,
-    fontWeight: 'bold',
-  },
-  profileIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#E0E0E0',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  profileInitial: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  memberInfo: {
-    fontSize: 14,
-    color: '#888',
-    marginBottom: 24,
-  },
-  cardContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-    gap: 16,
-  },
-  card: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-    padding: 16,
-    borderRadius: 12,
   },
   largeCard: {
     flex: 1.5, // Make it larger
   },
-  cardTitle: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 8,
-  },
-  cardValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  largeCardValue: {
-    fontSize: 32,
-  },
-  actionCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F0F8FF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-  },
-  actionText: {
-    marginLeft: 12,
-    fontSize: 14,
-    color: '#333',
-    flex: 1,
-  },
-  primaryButton: {
-    backgroundColor: '#4A90E2',
-    padding: 18,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  primaryButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
 });
 
-export default DashboardScreen;
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#fff',
+//   },
+//   scrollView: {
+//     flex: 1,
+//   },
+//   scrollContentContainer: {
+//     padding: 20,
+//   },
+//   header: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     alignItems: 'center',
+//     marginBottom: 8,
+//   },
+//   headerTitle: {
+//     fontSize: 32,
+//     fontWeight: 'bold',
+//   },
+//   profileIcon: {
+//     width: 40,
+//     height: 40,
+//     borderRadius: 20,
+//     backgroundColor: '#E0E0E0',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+//   profileInitial: {
+//     fontSize: 18,
+//     fontWeight: 'bold',
+//     color: '#333',
+//   },
+//   memberInfo: {
+//     fontSize: 14,
+//     color: '#888',
+//     marginBottom: 24,
+//   },
+//   cardContainer: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     marginBottom: 24,
+//     gap: 16,
+//   },
+//   card: {
+//     flex: 1,
+//     backgroundColor: '#F5F5F5',
+//     padding: 16,
+//     borderRadius: 12,
+//   },
+//   largeCard: {
+//     flex: 1.5, // Make it larger
+//   },
+//   cardTitle: {
+//     fontSize: 14,
+//     color: '#555',
+//     marginBottom: 8,
+//   },
+//   cardValue: {
+//     fontSize: 24,
+//     fontWeight: 'bold',
+//   },
+//   largeCardValue: {
+//     fontSize: 32,
+//   },
+//   actionCard: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     backgroundColor: '#F0F8FF',
+//     padding: 16,
+//     borderRadius: 12,
+//     marginBottom: 16,
+//   },
+//   actionText: {
+//     marginLeft: 12,
+//     fontSize: 14,
+//     color: '#333',
+//     flex: 1,
+//   },
+//   primaryButton: {
+//     backgroundColor: '#4A90E2',
+//     padding: 18,
+//     borderRadius: 12,
+//     alignItems: 'center',
+//     marginTop: 16,
+//   },
+//   primaryButtonText: {
+//     color: 'white',
+//     fontSize: 16,
+//     fontWeight: 'bold',
+//   },
+// });

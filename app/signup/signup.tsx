@@ -1,6 +1,6 @@
 // screens/SignUpScreen.tsx
 import { Feather } from '@expo/vector-icons';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import CustomTextInput from '../../components/CustomTextInput';
@@ -8,36 +8,16 @@ import SocialButton from '../../components/SocialButton';
 
 export default function SignUpScreen() {
   const router = useRouter();
-
-  // Form state
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-
-  // Checkbox state
   const [agreeEmails, setAgreeEmails] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
-
-  // Basic form validation
-  const isFormValid = email.length > 0 && password.length > 0 && password === confirmPassword && agreeTerms;
-
-  const handleSignUp = () => {
-    if (!isFormValid) {
-      alert('Please fill out the form correctly and agree to the terms of use.');
-      return;
-    }
-    // --- 여기에 실제 회원가입 API 호출 로직을 구현합니다. ---
-    // API 호출 성공 후, signIn()을 호출하여 로그인 상태로 전환합니다.
-    // 그러면 AuthProvider가 자동으로 메인 화면으로 리디렉션합니다.
-  };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Create your account</Text>
-        <CustomTextInput placeholder="Email" keyboardType="email-address" value={email} onChangeText={setEmail} />
-        <CustomTextInput placeholder="Password" secureTextEntry value={password} onChangeText={setPassword} />
-        <CustomTextInput placeholder="Confirm password" secureTextEntry value={confirmPassword} onChangeText={setConfirmPassword} />
+        <CustomTextInput placeholder="Email" keyboardType="email-address" />
+        <CustomTextInput placeholder="Password" secureTextEntry />
+        <CustomTextInput placeholder="Confirm password" secureTextEntry />
 
         <TouchableOpacity style={styles.checkboxContainer} onPress={() => setAgreeEmails(!agreeEmails)}>
           <View style={[styles.checkbox, agreeEmails && styles.checkboxChecked]}>
@@ -51,14 +31,11 @@ export default function SignUpScreen() {
             {agreeTerms && <Feather name="check" size={14} color="white" />}
           </View>
           <Text style={styles.checkboxLabel}>
-            I have read and accept the{' '}
-            {/* 나중에 링크 걸기 */}
-            <Text style={styles.link}>Terms of use</Text>
-            
+            I have read and accept the <Text style={styles.link}>Terms of use</Text>
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.primaryButton, !isFormValid && styles.disabledButton]} onPress={handleSignUp} disabled={!isFormValid}>
+        <TouchableOpacity style={styles.primaryButton} onPress={() => router.replace('/(tabs)')}>
           <Text style={styles.primaryButtonText}>Create my account</Text>
         </TouchableOpacity>
 
@@ -67,9 +44,11 @@ export default function SignUpScreen() {
         <SocialButton icon="google" text="Continue with Google" />
         <SocialButton icon="apple" text="Continue with Apple" />
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Already have an account? </Text>
-          <Link href="/signin" asChild><Text style={styles.link}>Sign in</Text></Link>
-        </View>
+                  <Text style={styles.footerText}>Already have an account? </Text>
+                  <TouchableOpacity onPress={() => router.push('/signin')}>
+                    <Text style={styles.link}>Sign in</Text>
+                  </TouchableOpacity>
+                </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -128,10 +107,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 30,
   },
-  disabledButton: {
-    backgroundColor: '#4A90E2',
-    opacity: 0.5,
-  },
   primaryButtonText: {
     color: 'white',
     fontSize: 16,
@@ -154,3 +129,66 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+
+
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#fff',
+//   },
+//   scrollContainer: {
+//     padding: 20,
+//   },
+//   title: {
+//     fontSize: 32,
+//     fontWeight: 'bold',
+//     marginBottom: 32,
+//     color: '#111',
+//   },
+//   checkboxContainer: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     marginBottom: 20,
+//   },
+//   checkbox: {
+//     width: 20,
+//     height: 20,
+//     borderWidth: 2,
+//     borderColor: '#ccc',
+//     borderRadius: 4,
+//     marginRight: 12,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+//   checkboxChecked: {
+//     backgroundColor: '#4A90E2',
+//     borderColor: '#4A90E2',
+//   },
+//   checkboxLabel: {
+//     fontSize: 14,
+//     color: '#555',
+//     flex: 1, // Allow text to wrap
+//   },
+//   link: {
+//     color: '#4A90E2',
+//     textDecorationLine: 'underline',
+//   },
+//   primaryButton: {
+//     backgroundColor: '#4A90E2',
+//     padding: 18,
+//     borderRadius: 12,
+//     alignItems: 'center',
+//     marginTop: 16,
+//   },
+//   primaryButtonText: {
+//     color: 'white',
+//     fontSize: 16,
+//     fontWeight: 'bold',
+//   },
+//   dividerText: {
+//     textAlign: 'center',
+//     color: '#aaa',
+//     marginVertical: 24,
+//   },
+// });

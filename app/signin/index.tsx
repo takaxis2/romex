@@ -5,7 +5,7 @@ import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } fr
 import CustomTextInput from '../../components/CustomTextInput';
 import SocialButton from '../../components/SocialButton';
 
-const SignInScreen = () => {
+export default function SignInScreen(){
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -52,34 +52,29 @@ const SignInScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  scrollContainer: {
-    flexGrow: 1,
+    backgroundColor: '#121212',
     justifyContent: 'center',
-    padding: 20,
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 32,
+    color: 'white',
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 32,
-    color: '#111',
-    textAlign: 'center',
+    textAlign: 'left',
+    marginBottom: 40,
   },
   forgotPassword: {
     color: '#4A90E2',
     textAlign: 'right',
-    marginBottom: 24,
+    marginVertical: 12,
     fontWeight: '600',
   },
   primaryButton: {
     backgroundColor: '#4A90E2',
-    padding: 18,
+    paddingVertical: 18,
     borderRadius: 12,
     alignItems: 'center',
-  },
-  primaryButtonDisabled: {
-    backgroundColor: '#A9C9E8', // 비활성화 시 버튼 색상
+    marginTop: 20,
   },
   primaryButtonText: {
     color: 'white',
@@ -87,24 +82,89 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   dividerText: {
+    color: '#888',
     textAlign: 'center',
-    color: '#aaa',
-    marginVertical: 24,
+    marginVertical: 25,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 24,
+    alignItems: 'center',
+    marginTop: 40,
   },
   footerText: {
+    color: '#ccc',
     fontSize: 14,
-    color: '#555',
   },
   link: {
     color: '#4A90E2',
     fontWeight: 'bold',
     fontSize: 14,
   },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  primaryButtonDisabled: {
+    backgroundColor: '#A9C9E8', // 비활성화 시 버튼 색상
+  },
 });
 
-export default SignInScreen;
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#fff',
+//   },
+//   scrollContainer: {
+//     flexGrow: 1,
+//     justifyContent: 'center',
+//     padding: 20,
+//   },
+//   title: {
+//     fontSize: 32,
+//     fontWeight: 'bold',
+//     marginBottom: 32,
+//     color: '#111',
+//     textAlign: 'center',
+//   },
+//   forgotPassword: {
+//     color: '#4A90E2',
+//     textAlign: 'right',
+//     marginBottom: 24,
+//     fontWeight: '600',
+//   },
+//   primaryButton: {
+//     backgroundColor: '#4A90E2',
+//     padding: 18,
+//     borderRadius: 12,
+//     alignItems: 'center',
+//   },
+//   primaryButtonDisabled: {
+//     backgroundColor: '#A9C9E8', // 비활성화 시 버튼 색상
+//   },
+//   primaryButtonText: {
+//     color: 'white',
+//     fontSize: 16,
+//     fontWeight: 'bold',
+//   },
+//   dividerText: {
+//     textAlign: 'center',
+//     color: '#aaa',
+//     marginVertical: 24,
+//   },
+//   footer: {
+//     flexDirection: 'row',
+//     justifyContent: 'center',
+//     marginTop: 24,
+//   },
+//   footerText: {
+//     fontSize: 14,
+//     color: '#555',
+//   },
+//   link: {
+//     color: '#4A90E2',
+//     fontWeight: 'bold',
+//     fontSize: 14,
+//   },
+// });
