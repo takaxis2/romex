@@ -1,7 +1,9 @@
 // screens/DashboardScreen.tsx
 import { Feather } from '@expo/vector-icons';
-import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useFocusEffect } from 'expo-router';
+import React, { useCallback, useRef } from 'react';
+import { BackHandler, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // 카드 컴포넌트
 const InfoCard = ({ title, value, large = false }: { title: string; value: string; large?: boolean }) => (
@@ -28,6 +30,34 @@ const PrimaryButton = ({ text }: { text: string }) => (
 
 
 export default function DashboardScreen() {
+  // 뒤로가기 버튼을 두 번 눌러야 종료되게 하는 로직
+  const backPressedOnce = useRef(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        // 2초 안에 다시 누르지 않으면 초기화
+        if (backPressedOnce.current) {
+          BackHandler.exitApp();
+          return false; // 앱 종료
+        }
+
+        backPressedOnce.current = true;
+        ToastAndroid.show('한 번 더 누르면 종료됩니다.', ToastAndroid.SHORT);
+
+        setTimeout(() => {
+          backPressedOnce.current = false;
+        }, 2000);
+
+        return true; // 기본 뒤로가기 동작 막기
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => subscription.remove();
+    }, [])
+  );
+  
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContentContainer}>

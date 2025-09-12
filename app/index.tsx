@@ -1,8 +1,9 @@
 // screens/WelcomeScreen.tsx
-import { useRouter } from 'expo-router';
-import React, { useEffect } from 'react';
-import { ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { BackHandler, ImageBackground, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -23,6 +24,34 @@ export default function WelcomeScreen() {
     footerOpacity.value = withDelay(200, withTiming(1, { duration: 1000 }));
     footerTranslateY.value = withDelay(200, withTiming(0, { duration: 1000 }));
   }, []);
+
+  // 뒤로가기 버튼을 두 번 눌러야 종료되게 하는 로직
+    const backPressedOnce = useRef(false);
+
+  useFocusEffect(
+      useCallback(() => {
+        const onBackPress = () => {
+          // 2초 안에 다시 누르지 않으면 초기화
+          if (backPressedOnce.current) {
+            BackHandler.exitApp();
+            return false; // 앱 종료
+          }
+  
+          backPressedOnce.current = true;
+          ToastAndroid.show('한 번 더 누르면 종료됩니다.', ToastAndroid.SHORT);
+  
+          setTimeout(() => {
+            backPressedOnce.current = false;
+          }, 2000);
+  
+          return true; // 기본 뒤로가기 동작 막기
+        };
+  
+        const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+  
+        return () => subscription.remove();
+      }, [])
+    );
 
   const animatedContentStyle = useAnimatedStyle(() => ({
     opacity: contentOpacity.value,
@@ -48,11 +77,11 @@ export default function WelcomeScreen() {
         <AnimatedView style={[styles.footer, animatedFooterStyle]}>
           <TouchableOpacity
             style={styles.primaryButton}
-            onPress={() => router.replace('/signup')} // 스택을 'signup'으로 교체합니다.
+            onPress={() => router.push('/signup')} // 스택을 'signup'으로 교체합니다.
           >
             <Text style={styles.buttonText}>Create your account for free</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.secondaryButton} onPress={() => router.replace('/signin')}>
+          <TouchableOpacity style={styles.secondaryButton} onPress={() => router.push('/signin')}>
             <Text style={styles.buttonText}>Sign In</Text>
           </TouchableOpacity>
         </AnimatedView>

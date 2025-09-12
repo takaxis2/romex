@@ -1,7 +1,8 @@
 // screens/SignInScreen.tsx
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomTextInput from '../../components/CustomTextInput';
 import SocialButton from '../../components/SocialButton';
 
@@ -12,6 +13,7 @@ export default function SignInScreen(){
   const handleSignIn = () => {
     setIsLoading(true);
     // 실제 앱에서는 여기에 API 호출 등 비동기 로직이 들어갑니다.
+    router.dismissAll();
     router.replace('/(tabs)');
   };
   return (

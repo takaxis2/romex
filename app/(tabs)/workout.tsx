@@ -1,6 +1,8 @@
 // screens/WorkoutScreen.tsx
+import { router } from 'expo-router';
 import React, { useRef, useState } from 'react';
-import { Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, FlatList, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import WorkoutCard from '../../components/WorkoutCard';
 import { workouts } from '../../data/workoutData';
 
@@ -41,9 +43,17 @@ export default function WorkoutScreen() {
         onMomentumScrollEnd={onMomentumScrollEnd}
         renderItem={({ item, index }) => (
           // 각 카드 아이템에 수평 패딩을 추가하여 카드 사이에 시각적인 간격을 만듭니다.
-          <View style={{ width: CARD_WIDTH, paddingHorizontal: CARD_GAP / 2 }}>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() => router.push({
+              pathname: '/workoutDetail',
+              params: { categoryTitle: item.title }
+            })}
+          >
+            <View style={{ width: CARD_WIDTH, paddingHorizontal: CARD_GAP / 2 }}>
               <WorkoutCard item={item} />
-          </View>
+            </View>
+          </TouchableOpacity>
         )}
       />
 
