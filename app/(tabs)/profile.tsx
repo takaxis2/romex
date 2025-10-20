@@ -104,7 +104,7 @@ const InfoCard = ({icon, title, description, buttonText, isLast = false}: InfoCa
 );
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0D0D0D' },
+  container: { flex: 1, backgroundColor: '#1C2C35' },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1A1A1A',
+    backgroundColor: '#2E4B4F',
     padding: 16,
     borderRadius: 12,
     marginHorizontal: 20,
@@ -129,8 +129,8 @@ const styles = StyleSheet.create({
   profileIcon: {
     width: 44,
     height: 44,
-    borderRadius: 22,
-    backgroundColor: '#333',
+    borderRadius: 22, // A slightly lighter shade than the background
+    backgroundColor: '#3A5A60',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     marginLeft: 12,
-    flex: 1,
+    flex: 1, // Keep this to ensure the chevron is pushed to the right
   },
   premiumButton: {
     flexDirection: 'row',
@@ -166,8 +166,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     marginHorizontal: 20,
     marginBottom: 24,
-    borderBottomWidth: 1,
-    borderColor: '#333',
+    borderBottomWidth: 1, // Use a subtle border color from the new theme
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   tab: {
     paddingVertical: 12,
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     borderColor: 'white',
   },
   tabText: {
-    color: '#888',
+    color: 'rgba(255, 255, 255, 0.6)',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    color: '#aaa',
+    color: 'rgba(255, 255, 255, 0.7)',
     fontSize: 14,
     marginBottom: 16,
   },
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#1A1A1A',
+    backgroundColor: '#2E4B4F',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     flexDirection: 'row',
-    backgroundColor: '#1A1A1A',
+    backgroundColor: '#2E4B4F',
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   infoCardDescription: {
-    color: '#aaa',
+    color: 'rgba(255, 255, 255, 0.7)',
     fontSize: 14,
     marginTop: 4,
     marginBottom: 12,
