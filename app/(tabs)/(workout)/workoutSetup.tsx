@@ -22,7 +22,7 @@ export default function WorkoutTimeSelectionScreen(){
         <View style={styles.header}>
           <TouchableOpacity onPress={() => {
             router.dismissAll();
-            router.replace('/(tabs)/(workout)/index');}}>
+            router.replace('/(tabs)/(workout)');}}>
             <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>ROMEX</Text>
