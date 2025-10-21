@@ -22,13 +22,21 @@ export default function WorkoutPlayerScreen () {
   // ----------------- ⬇️ 2. useVideoPlayer 훅 사용 -----------------
   const player = useVideoPlayer(  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     (player) => {
+      player.timeUpdateEventInterval = 1;
       // player.play(); // 로드되면 자동 재생
-      // setDuration(player.duration * 1000)
     }
   );
+
   const [isPlaying, setIsPlaying] = useState(false);
-  const [position, setPosition] = useState(0);
-  const [duration, setDuration] = useState(1);
+  const [currentTime, setCurrentTime] = useState(0);
+
+  useEffect(() => {
+    const subscription = player.addListener('timeUpdate', (event) => {
+      // 비디오의 현재 시간을 상태에 업데이트하여 UI 리렌더링을 유도합니다.
+      setCurrentTime(event.currentTime);
+    });
+    return () => subscription.remove();
+  }, [player]);
 
 
   useEffect(() => {
@@ -38,24 +46,6 @@ export default function WorkoutPlayerScreen () {
     return () => subscription.remove();
   }, [player]);
   
-  // useEffect(() => {
-  //   // 'statusChange'는 isLoaded, duration 등 비디오의 전반적인 상태가 바뀔 때 호출됩니다.
-  //   const subscription = player.addListener('statusChange', (event) => {
-  //     // 비디오가 로드되어 duration 값을 사용할 수 있을 때 상태를 업데이트합니다.
-  //     if (event.isLoaded && event.status.duration) {
-  //       setDuration(event.status.duration > 0 ? event.status.duration * 1000 : 1);
-  //     }
-  //   });
-  //   return () => subscription.remove();
-  // }, [player]);
-
-  useEffect(() => {
-    const subscription = player.addListener('timeUpdate', (event) => {
-        setPosition(event.currentTime * 1000); // 초 -> 밀리초
-    });
-    return () => subscription.remove();
-  }, [player]);
-
   return (
     <SafeAreaView style={styles.safeArea}>
         {/* --- Custom Header --- */}
@@ -75,8 +65,6 @@ export default function WorkoutPlayerScreen () {
             nativeControls={false}
             contentFit="contain"
         />
-        {/* 이건 왜 있는건지 모르겠음 */}
-        {/* <View style={styles.placeholderCircle} /> */}
 
         <Text style={styles.exerciseTitle}>우리에게 꼭 필요한 운동</Text>
         
@@ -97,18 +85,19 @@ export default function WorkoutPlayerScreen () {
             <TouchableOpacity onPress={() => {isPlaying ? player.pause() : player.play()}}>
                 <Ionicons name={isPlaying ? 'pause' : 'play'} size={32} color="white" />
             </TouchableOpacity>
-            <Text style={styles.timeText}>{formatTime(position)}</Text>
+            <Text style={styles.timeText}>{formatTime(currentTime * 1000)}</Text>
             <Slider
                 style={styles.slider}
                 minimumValue={0}
                 maximumValue={player.duration}
-                value={position}
+                value={player.currentTime}
                 minimumTrackTintColor="#FFFFFF"
                 maximumTrackTintColor="rgba(255,255,255,0.5)"
                 thumbTintColor="#FFFFFF"
-                onSlidingComplete={value => player.seekBy(value / 1000)} // 밀리초 -> 초
+                onSlidingComplete={value => {
+                  player.currentTime = value}}
             />
-            <Text style={styles.timeText}>{formatTime(player.duration)}</Text>
+            <Text style={styles.timeText}>{formatTime(player.duration * 1000)}</Text>
             <TouchableOpacity><Ionicons name="bookmark-outline" size={24} color="white" /></TouchableOpacity>
             <TouchableOpacity><Ionicons name="expand" size={24} color="white" /></TouchableOpacity>
         </View>

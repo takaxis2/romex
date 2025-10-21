@@ -3,24 +3,26 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+const primary = '#34D399'; // Accent color from SignIn/SignUp screens
+const background = '#1C2C35'; // Background color from SignIn/SignUp screens
 
 export const Colors = {
   light: {
+    // TODO: Define light theme colors based on your design
     text: '#11181C',
     background: '#fff',
-    tint: tintColorLight,
+    tint: primary,
     icon: '#687076',
     tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    tabIconSelected: primary,
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    text: '#FFFFFF',
+    secondaryText: 'rgba(255, 255, 255, 0.7)',
+    background: background,
+    tint: primary,
+    icon: 'rgba(255, 255, 255, 0.7)',
+    tabIconDefault: 'rgba(255, 255, 255, 0.7)',
+    tabIconSelected: primary,
   },
 };
