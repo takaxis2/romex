@@ -54,37 +54,38 @@ export default function SignInScreen(){
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
+    backgroundColor: '#1C2C35', // WorkoutScreen의 safeArea 배경색
+    // justifyContent: 'center', // scrollContainer에서 처리
+    paddingHorizontal: 16, // WorkoutScreen의 일반적인 패딩
   },
   title: {
     color: 'white',
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'left',
-    marginBottom: 40,
+    marginTop: 20, // WorkoutScreen의 screenTitle과 유사하게
+    marginBottom: 20, // WorkoutScreen의 screenTitle과 유사하게
   },
   forgotPassword: {
-    color: '#4A90E2',
+    color: '#34D399', // 강조 색상 (WorkoutSetupScreen의 버튼 색상)
     textAlign: 'right',
     marginVertical: 12,
     fontWeight: '600',
   },
   primaryButton: {
-    backgroundColor: '#4A90E2',
+    backgroundColor: '#34D399', // 강조 색상
     paddingVertical: 18,
-    borderRadius: 12,
+    borderRadius: 99, // 더 둥근 버튼
     alignItems: 'center',
     marginTop: 20,
   },
   primaryButtonText: {
-    color: 'white',
+    color: '#1C2C35', // 버튼 배경색과 대비되는 어두운 색상
     fontSize: 16,
     fontWeight: 'bold',
   },
   dividerText: {
-    color: '#888',
+    color: 'rgba(255, 255, 255, 0.7)', // 일반 텍스트 색상
     textAlign: 'center',
     marginVertical: 25,
   },
@@ -95,78 +96,20 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   footerText: {
-    color: '#ccc',
+    color: 'rgba(255, 255, 255, 0.7)', // 일반 텍스트 색상
     fontSize: 14,
   },
   link: {
-    color: '#4A90E2',
+    color: '#34D399', // 강조 색상
     fontWeight: 'bold',
     fontSize: 14,
   },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 20,
+    padding: 0, // container에서 paddingHorizontal을 처리하므로 여기서는 제거
   },
   primaryButtonDisabled: {
-    backgroundColor: '#A9C9E8', // 비활성화 시 버튼 색상
+    backgroundColor: 'rgba(52, 211, 153, 0.5)', // 강조 색상의 투명도 조절
   },
 });
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//   },
-//   scrollContainer: {
-//     flexGrow: 1,
-//     justifyContent: 'center',
-//     padding: 20,
-//   },
-//   title: {
-//     fontSize: 32,
-//     fontWeight: 'bold',
-//     marginBottom: 32,
-//     color: '#111',
-//     textAlign: 'center',
-//   },
-//   forgotPassword: {
-//     color: '#4A90E2',
-//     textAlign: 'right',
-//     marginBottom: 24,
-//     fontWeight: '600',
-//   },
-//   primaryButton: {
-//     backgroundColor: '#4A90E2',
-//     padding: 18,
-//     borderRadius: 12,
-//     alignItems: 'center',
-//   },
-//   primaryButtonDisabled: {
-//     backgroundColor: '#A9C9E8', // 비활성화 시 버튼 색상
-//   },
-//   primaryButtonText: {
-//     color: 'white',
-//     fontSize: 16,
-//     fontWeight: 'bold',
-//   },
-//   dividerText: {
-//     textAlign: 'center',
-//     color: '#aaa',
-//     marginVertical: 24,
-//   },
-//   footer: {
-//     flexDirection: 'row',
-//     justifyContent: 'center',
-//     marginTop: 24,
-//   },
-//   footerText: {
-//     fontSize: 14,
-//     color: '#555',
-//   },
-//   link: {
-//     color: '#4A90E2',
-//     fontWeight: 'bold',
-//     fontSize: 14,
-//   },
-// });

@@ -79,10 +79,10 @@ export default function WelcomeScreen() {
             style={styles.primaryButton}
             onPress={() => router.push('/signup')} // 스택을 'signup'으로 교체합니다.
           >
-            <Text style={styles.buttonText}>Create your account for free</Text>
+            <Text style={styles.primaryButtonText}>Create your account for free</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.secondaryButton} onPress={() => router.push('/signin')}>
-            <Text style={styles.buttonText}>Sign In</Text>
+            <Text style={styles.secondaryButtonText}>Sign In</Text>
           </TouchableOpacity>
         </AnimatedView>
       </SafeAreaView>
@@ -110,18 +110,25 @@ const styles = StyleSheet.create({
     gap: 16, // 버튼 사이의 간격
   },
   primaryButton: {
-    backgroundColor: '#4A90E2',
+    backgroundColor: '#34D399', // 테마 강조 색상으로 변경
     paddingVertical: 18,
-    borderRadius: 12,
+    borderRadius: 99, // 둥근 버튼으로 변경
     alignItems: 'center',
   },
   secondaryButton: {
     backgroundColor: 'transparent',
     paddingVertical: 18,
-    borderRadius: 12,
+    borderRadius: 99, // 둥근 버튼으로 변경
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'white',
   },
-  buttonText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
+  primaryButtonText: {
+    color: '#1C2C35', // 버튼 배경과 대비되는 색상으로 변경
+    fontSize: 16,
+    fontWeight: 'bold'
+  },
+  secondaryButtonText: {
+    color: 'white', fontSize: 16, fontWeight: 'bold'
+  },
 });
