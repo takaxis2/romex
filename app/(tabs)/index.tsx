@@ -1,12 +1,13 @@
 // screens/DashboardScreen.tsx
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import React, { useCallback, useRef } from 'react';
 import { BackHandler, Dimensions, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Circle, Svg } from 'react-native-svg';
 import BodyOutline from '../../components/BodyOutline';
+
 
 // 통계 카드 컴포넌트
 
@@ -79,7 +80,9 @@ export default function DashboardScreen() {
           {/* --- 통계 카드 --- */}
           <StatisticsCard />
           {/* --- 신체 점수 카드 --- */}
-          <BodyScoreCard />
+          <TouchableOpacity>
+            <BodyScoreCard />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.cardRow}>
@@ -100,7 +103,7 @@ export default function DashboardScreen() {
         <ChartCard />
 
         {/* --- 하단 버튼 --- */}
-        <TouchableOpacity style={styles.bottomButton}>
+        <TouchableOpacity style={styles.bottomButton} onPress={()=> router.push('/(test)/instructions')}>
             <Text style={styles.bottomButtonText}>Test your mobility for free</Text>
         </TouchableOpacity>
 

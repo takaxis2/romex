@@ -25,6 +25,7 @@ export default function RootLayout() {
         <Stack.Screen name="signin/index" options={{ title: 'Sign In', headerBackTitle: 'Back', headerShown: false }} />
         <Stack.Screen name="signup/index" options={{ title: 'Sign Up', headerBackTitle: 'Back', headerShown: false }} />
         <Stack.Screen name="setting" options={{ title: 'Settings', presentation: 'modal', headerStyle: { backgroundColor: '#0D0D0D' }, headerTintColor: 'white' }} />
+        <Stack.Screen name="(test)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
