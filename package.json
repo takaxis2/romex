@@ -42,7 +42,8 @@
     "react-native-svg": "15.12.1",
     "react-native-web": "^0.21.0",
     "react-native-webview": "13.15.0",
-    "expo-video": "~3.0.11"
+    "expo-video": "~3.0.11",
+    "expo-asset": "~12.0.9"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

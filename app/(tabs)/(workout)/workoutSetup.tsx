@@ -1,13 +1,29 @@
 // screens/WorkoutTimeSelectionScreen.tsx
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import React, { useState } from 'react';
+import { router, useNavigation } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function WorkoutTimeSelectionScreen(){
   const [selectedTime, setSelectedTime] = useState(8);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove',(e)=>{
+      if (e.data.action.type !== 'GO_BACK') {
+        return;
+      }
+      
+      e.preventDefault();
+
+      // expo-router의 router 객체로 원하는 경로로 보냅니다.
+      router.replace('/(tabs)/(workout)'); // 예: 'home' 스크린으로 강제 이동
+    });
+
+    return unsubscribe;
+  },[navigation, router])
 
   const timeOptions = [
     { time: 3, tag: 'MobiFlash' },

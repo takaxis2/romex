@@ -31,7 +31,7 @@ export default function TestLayout() {
       }}
     >
       <Stack.Screen name="instructions" />
-      <Stack.Screen name="input" />
+      {/* <Stack.Screen name="input" /> */}
     </Stack>
   );
 }
