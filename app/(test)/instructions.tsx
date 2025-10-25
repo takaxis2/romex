@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   // --- instructions.tsx 스타일 ---
   safeArea: { flex: 1, backgroundColor: '#1C2C35' },
   container: { flex: 1, paddingHorizontal: 16 },
-    header: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

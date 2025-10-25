@@ -1,6 +1,8 @@
+import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Circle, Svg } from 'react-native-svg';
 import { TEST_DATA } from '../../data/testData'; // ⬅️ 테스트 제목을 가져오기 위해 import
 
@@ -62,6 +64,13 @@ export default function TestResultScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <View style={styles.header}>
+         <TouchableOpacity onPress={()=>{router.back()}}>
+           <Ionicons name="arrow-back" size={24} color="white" />
+         </TouchableOpacity>
+         <Text style={styles.headerTitle}>ROMEX</Text>
+         <Text style={styles.flag}>🇰🇷</Text>
+       </View>
       <View style={styles.container}>
         <Text style={styles.title}>유연성 테스트 완료!</Text>
         <Text style={styles.subtitle}>측정 결과를 확인하세요.</Text>
@@ -103,6 +112,22 @@ export default function TestResultScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#1C2C35' },
   container: { flex: 1, paddingHorizontal: 16 },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  headerTitle: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  flag: {
+    fontSize: 24,
+  },
   title: {
     color: 'white',
     fontSize: 24,
