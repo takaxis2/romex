@@ -3,21 +3,21 @@
 
 // --- 1. 비디오 에셋 ---
 // 실제로는 10개의 다른 비디오가 필요하겠지만, 예시로 하나를 재사용합니다.
-const mainVideo = require('../../assets/mobility_test/mobility_test.mp4');
+const mainVideo = require('../assets/mobility_test/mobility_test.mp4');
 
 // --- 2. 이미지 에셋 ---
 // 실제로는 10개의 다른 이미지 세트(각 10장)가 필요하겠지만, 예시로 하나를 재사용합니다.
 const mainImageSet = [
-  require('../../assets/mobility_test/mobility_test_1.png'),
-  require('../../assets/mobility_test/mobility_test_2.png'),
-  require('../../assets/mobility_test/mobility_test_3.png'),
-  require('../../assets/mobility_test/mobility_test_4.png'),
-  require('../../assets/mobility_test/mobility_test_5.png'),
-  require('../../assets/mobility_test/mobility_test_6.png'),
-  require('../../assets/mobility_test/mobility_test_7.png'),
-  require('../../assets/mobility_test/mobility_test_8.png'),
-  require('../../assets/mobility_test/mobility_test_9.png'),
-  require('../../assets/mobility_test/mobility_test_10.png'),
+  require('../assets/mobility_test/mobility_test_2.png'),
+  require('../assets/mobility_test/mobility_test_1.png'),
+  require('../assets/mobility_test/mobility_test_3.png'),
+  require('../assets/mobility_test/mobility_test_4.png'),
+  require('../assets/mobility_test/mobility_test_5.png'),
+  require('../assets/mobility_test/mobility_test_6.png'),
+  require('../assets/mobility_test/mobility_test_7.png'),
+  require('../assets/mobility_test/mobility_test_8.png'),
+  require('../assets/mobility_test/mobility_test_9.png'),
+  require('../assets/mobility_test/mobility_test_10.png'),
 ];
 
 // --- 3. 테스트 데이터 (10개) ---

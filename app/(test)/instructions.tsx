@@ -3,7 +3,7 @@ import Slider from '@react-native-community/slider';
 import { useAssets } from 'expo-asset';
 import { router } from 'expo-router';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -15,8 +15,9 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import { TEST_DATA, TOTAL_TEST_STEPS } from '../../data/testData';
 // --- input.tsx에서 가져온 이미지 에셋 ---
+
 const scoreImages = [
   require('../../assets/mobility_test/mobility_test_1.png'),
   require('../../assets/mobility_test/mobility_test_2.png'),
@@ -55,10 +56,16 @@ export default function TestInstructionsScreen() {
   // --- Modal 및 점수 상태 추가 ---
   const [modalVisible, setModalVisible] = useState(false);
   const [isPlaying, setIsPlaying] = useState(player.playing);
+  const [currentStep, setCurrentStep] = useState(1); // 현재 테스트 단계 (1, 2, ...)
   const [score, setScore] = useState(1); // input.tsx의 점수 state
 
   // --- input.tsx의 useAssets 훅 ---
   const [assets, error] = useAssets(scoreImages);
+
+  // --- 2. 현재 스텝에 맞는 데이터 및 에셋 로드 ---
+  const data = useMemo(() => {
+    return TEST_DATA.find(d => d.step === currentStep);
+  }, [currentStep]);
 
   // 비디오의 재생 상태(재생/일시정지)가 변경될 때마다 isPlaying 상태를 업데이트합니다.
   useEffect(() => {
@@ -68,13 +75,62 @@ export default function TestInstructionsScreen() {
     return () => subscription.remove();
   }, [player]);
 
-  // 모달의 '확인' 버튼 클릭 시
-  const handleConfirm = () => {
-    setModalVisible(false);
-    // 점수 저장 로직...
-    // 확인 후 테스트 스택 닫기 (대시보드로 돌아감)
-    router.back();
+  // 스텝이 바뀔 때 비디오 소스도 변경
+  useEffect(() => {
+    player.replaceAsync(data?.video);
+  }, [currentStep, data?.video, player]);
+
+  // 커스텀 뒤로가기 로직 (핵심)
+  const handleBack = () => {
+    if (modalVisible) {
+      // 모달이 열려있으면 모달만 닫음 (input -> instruction)
+      setModalVisible(false);
+    } else if (currentStep > 1) {
+      // 1단계가 아니면 이전 스텝으로 (Test 2 -> Test 1)
+      setCurrentStep(currentStep - 1);
+    } else {
+      // 1단계면 스택 종료 (Test 1 -> Dashboard)
+      router.back();
+    }
   };
+
+  // 💡 모달 "확인" 버튼 로직 (핵심)
+  const handleConfirm = () => {
+    // TODO: currentStep과 score를 저장하는 로직
+    console.log(`Step ${currentStep} Score: ${score}`);
+    
+    setModalVisible(false); // 모달 닫기
+    setScore(1); // 점수 리셋
+
+    if (currentStep === TOTAL_TEST_STEPS) {
+      // 마지막 스텝이면 스택 결과 화면
+      router.replace('/(test)/result');
+    } else {
+      // 다음 스텝으로 이동
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  // 데이터 로딩 중... (안전 장치)
+  if (!data || !assets) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.header}>
+         <TouchableOpacity onPress={handleBack}>
+           <Ionicons name="arrow-back" size={24} color="white" />
+         </TouchableOpacity>
+         <Text style={styles.headerTitle}>ROMEX</Text>
+         <Text style={styles.flag}>🇰🇷</Text>
+       </View>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator size="large" color="#FFFFFF" />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // 프로그레스 바 계산
+  const progress = `${(currentStep / TOTAL_TEST_STEPS) * 100}%`;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -82,40 +138,37 @@ export default function TestInstructionsScreen() {
         여기서는 삭제해도 됩니다. (있어도 덮어쓰지 않음)
       */}
       <View style={styles.header}>
-         <TouchableOpacity onPress={()=> router.replace('/(tabs)')}>
+         <TouchableOpacity onPress={handleBack}>
            <Ionicons name="arrow-back" size={24} color="white" />
          </TouchableOpacity>
          <Text style={styles.headerTitle}>ROMEX</Text>
          <Text style={styles.flag}>🇰🇷</Text>
        </View>
 
-      {/* --- 1. instructions.tsx의 컨텐츠 --- */}
+      {/* --- 1. instructions.tsx의 컨텐츠 (데이터 동적 바인딩) --- */}
       <View style={styles.container}>
         <View style={styles.progressBarContainer}>
-          <View style={[styles.progressBar, { width: '10%' }]} />
+          <View style={[styles.progressBar, { width: progress }]} />
         </View>
 
-        <Text style={styles.title}>유연성 테스트 (허리)</Text>
+        <Text style={styles.title}>{data.title}</Text>
         <Text style={styles.subtitle}>영상을 보고 다음 단계에서 똑같이 따라해 주세요.</Text>
 
-        {/* 비디오 터치 시 재생/일시정지를 위해 TouchableOpacity로 감쌉니다. */}
-        {/* <TouchableOpacity activeOpacity={0.9} onPress={() => {isPlaying ? player.pause() : player.play()        }}> */}
+        <TouchableOpacity activeOpacity={0.9}>
           <VideoView player={player} style={styles.video} nativeControls={false} contentFit='contain'/>
-        {/* </TouchableOpacity> */}
+        </TouchableOpacity>
 
-
-        <Text style={styles.imageSubtitle}>테스트 1/10 • 허리 유연성 테스트</Text>
+        <Text style={styles.imageSubtitle}>{data.imageSubtitle}</Text>
 
         <View style={styles.instructionBox}>
-          <InstructionRow text="옆으로 눕습니다." isGood={true} />
-          <InstructionRow text="팔을 가슴 쪽으로 두고, 팔꿈치를 굽힙니다." isGood={true} />
-          <InstructionRow text="어깨를 바닥에 붙이고 유지합니다." isGood={true} />
-          <InstructionRow text="어깨를 바닥에서 들어올리지 마세요." isGood={false} />
+          {data.instructions.map((item, index) => (
+             <InstructionRow key={index} text={item.text} isGood={item.isGood} />
+          ))}
         </View>
 
         <View style={styles.flexSpacer} />
 
-        {/* --- "계속" 버튼은 이제 모달을 엽니다 --- */}
+        {/* --- "계속" 버튼 (모달 열기) --- */}
         <TouchableOpacity style={styles.bottomButton} onPress={() => setModalVisible(true)}>
           <Text style={styles.bottomButtonText}>계속</Text>
         </TouchableOpacity>
@@ -126,27 +179,21 @@ export default function TestInstructionsScreen() {
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+        onRequestClose={handleBack} // 💡 안드로이드 뒤로가기 = handleBack
       >
         <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
           <Pressable style={styles.modalContent} onPress={(e) => e.stopPropagation()}>
             <View style={styles.handleBar} />
             <Text style={styles.modalTitle}>결과를 입력하세요</Text>
 
-            {/* --- input.tsx의 이미지 뷰어 --- */}
             <View style={styles.imageContainer}>
-              {assets ? (
-                <Image
-                  source={scoreImages[score - 1]} // score 값(1~10)에 따라 이미지 변경
-                  style={styles.image}
-                  resizeMode="contain"
-                />
-              ) : (
-                <ActivityIndicator size="large" color="#FFFFFF" />
-              )}
+              <Image
+                source={assets[score - 1]} // assets는 data.images를 기반으로 로드됨
+                style={styles.image}
+                resizeMode="contain"
+              />
             </View>
 
-            {/* --- input.tsx의 슬라이더 --- */}
             <View style={styles.sliderContainer}>
               <Slider
                 style={{ width: '100%', height: 40 }}
@@ -160,11 +207,11 @@ export default function TestInstructionsScreen() {
                 thumbTintColor="#FFFFFF"
               />
               <Text style={styles.scoreText}>
-                허리 유연성 테스트 : {score} 점
+                {data.title} : {score} 점
               </Text>
             </View>
 
-            {/* --- input.tsx의 "확인" 버튼 --- */}
+            {/* 💡 "확인" 버튼 (confirm 로직 연결) */}
             <TouchableOpacity style={styles.bottomButton} onPress={handleConfirm}>
               <Text style={styles.bottomButtonText}>확인</Text>
             </TouchableOpacity>
