@@ -88,7 +88,7 @@ const GraphCard = ({ scores }: { scores: number[] }) => {
   const graphData = [
     { label: '목', icon: 'chevron-up-circle-outline', score: scores[7] || 0 },
     { label: '어깨', icon: 'arrow-left-right-bold-outline', score: scores[1] || 0 },
-    { label: '허리', icon: 'spine', score: scores[0] || 0 },
+    { label: '허리', icon: 'pillar', score: scores[0] || 0 },
     { label: '골반', icon: 'seat-outline', score: scores[3] || 0 },
     { label: '무릎', icon: 'debug-step-over', score: scores[0] || 0 }, // (임시)
     { label: '발목', icon: 'shoe-print', score: scores[2] || 0 },
@@ -133,6 +133,13 @@ export default function TestResultScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <View style={styles.header}>
+               <TouchableOpacity onPress={() => router.back()}>
+                 <Ionicons name="arrow-back" size={24} color="white" />
+               </TouchableOpacity>
+               <Text style={styles.headerTitle}>ROMEX</Text>
+               <Text style={styles.flag}>🇰🇷</Text>
+             </View>
       <ScrollView style={styles.container}>
         <Text style={styles.screenTitle}>모빌리티 점수</Text>
 
@@ -162,6 +169,22 @@ export default function TestResultScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#1C2C35' },
   container: { flex: 1, padding: CARD_CONTAINER_PADDING },
+   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  headerTitle: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  flag: {
+    fontSize: 24,
+  },
   screenTitle: {
     color: 'white',
     fontSize: 24,

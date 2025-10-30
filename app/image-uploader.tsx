@@ -3,13 +3,13 @@ import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
-    FlatList,
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -28,7 +28,7 @@ export default function ImageUploaderScreen() {
 
     // 2. 이미지 피커 실행
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsMultipleSelection: true, // ⬅️ 여러 장 선택 허용
       quality: 1,
     });
@@ -77,7 +77,7 @@ export default function ImageUploaderScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* --- 커스텀 헤더 --- */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.replace('/(tabs)')}>
           <Text style={styles.headerButton}>취소</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>사진 업로드</Text>
