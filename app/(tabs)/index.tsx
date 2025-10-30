@@ -80,7 +80,7 @@ export default function DashboardScreen() {
           {/* --- 통계 카드 --- */}
           <StatisticsCard />
           {/* --- 신체 점수 카드 --- */}
-          <TouchableOpacity>
+          <TouchableOpacity onPress={()=> router.replace('/')}>
             <BodyScoreCard />
           </TouchableOpacity>
         </View>

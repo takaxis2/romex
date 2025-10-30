@@ -26,6 +26,14 @@ export default function RootLayout() {
         <Stack.Screen name="signup/index" options={{ title: 'Sign Up', headerBackTitle: 'Back', headerShown: false }} />
         <Stack.Screen name="setting" options={{ title: 'Settings', presentation: 'modal', headerStyle: { backgroundColor: '#0D0D0D' }, headerTintColor: 'white' }} />
         <Stack.Screen name="(test)" options={{ headerShown: false }} />
+        <Stack.Screen 
+        name="image-uploader" // ⬅️ 새로 만들 화면의 파일 이름
+        options={{ 
+          headerShown: false,
+          presentation: 'modal', // ⬅️ 이 화면을 모달로 설정
+          animation: 'slide_from_bottom',
+        }} 
+      />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
