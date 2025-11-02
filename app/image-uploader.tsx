@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as PoseDetection from '../modules/PoseDetectionModule/index';
 
 export default function ImageUploaderScreen() {
   // 1. 선택된 이미지 URI들을 저장할 state
@@ -61,11 +62,8 @@ export default function ImageUploaderScreen() {
 
   // 4. 확인 버튼 (선택 완료)
   const handleConfirm = () => {
-    // TODO: 선택된 이미지(images)들을 서버로 업로드하거나
-    // 부모 화면으로 전달하는 로직
-    
-    console.log('최종 선택된 이미지:', images.map(img => img.uri));
-    router.back(); // 모달 닫기
+    const result = PoseDetection.default.detectPoseFromFile(images[0].uri)
+    console.log(JSON.stringify(result, null, 2))
   };
 
   // 5. 개별 이미지 삭제

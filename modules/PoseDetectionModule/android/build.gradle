@@ -43,5 +43,7 @@ android {
 }
 
 dependencies {
+    // implementation 'com.google.mediapipe:tasks-vision:latest-version'
     implementation 'com.google.mediapipe:tasks-vision:latest.release'
+    implementation "androidx.core:core-ktx:1.+"
 }

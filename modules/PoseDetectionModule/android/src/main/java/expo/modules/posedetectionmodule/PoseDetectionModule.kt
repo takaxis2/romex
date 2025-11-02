@@ -3,24 +3,40 @@ package expo.modules.posedetectionmodule
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import java.net.URL
+import android.content.Context
+import android.net.Uri
+import android.provider.MediaStore
+import android.os.Build
+import android.graphics.ImageDecoder
+import android.graphics.Bitmap
+import expo.modules.kotlin.records.Record // Record 클래스 사용을 위해
+import expo.modules.kotlin.records.Field // Field 어노테이션 사용을 위해
+// MediaPipe 관련 import
+import com.google.mediapipe.tasks.vision.core.RunningMode
+import com.google.mediapipe.tasks.core.BaseOptions
+import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
+import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker.PoseLandmarkerOptions
+import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
+import com.google.mediapipe.framework.image.BitmapImageBuilder
+
 
 // 1. JS로 전달할 랜드마크 하나의 데이터 구조를 정의합니다.
 // Expo Modules API에서는 'Record'를 사용하여 타입 안전성을 높입니다.
 class LandmarkRecord : Record {
     @Field
-    val x: Double = 0.0
+    var x: Double = 0.0
     @Field
-    val y: Double = 0.0
+    var y: Double = 0.0
     @Field
-    val z: Double = 0.0
+    var z: Double = 0.0
     @Field
-    val visibility: Double = 0.0
+    var visibility: Double = 0.0
 }
 
 // 2. JS로 전달할 최종 결과 데이터 구조를 정의합니다.
 class PoseResultRecord : Record {
     @Field
-    val landmarks: List<List<LandmarkRecord>> = emptyList() // 감지된 사람(List) -> 각 관절(List)
+    var landmarks: List<List<LandmarkRecord>> = emptyList() // 감지된 사람(List) -> 각 관절(List)
 }
 
 class PoseDetectionModule : Module() {
@@ -62,13 +78,15 @@ class PoseDetectionModule : Module() {
             
             // 4-1. 파일 경로 (URI)에서 비트맵(Bitmap) 이미지 로드
             val imageUri = Uri.parse(path)
-            val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val originalBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 // Android 9 (Pie) 이상
                 ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, imageUri))
             } else {
                 // 하위 버전
                 MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
             }
+            // MediaPipe에서 요구하는 ARGB_8888 형식으로 변환합니다.
+            val bitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true)
             
             // 4-2. MediaPipe의 이미지 형식(MPImage)으로 변환
             val mpImage = BitmapImageBuilder(bitmap).build()
@@ -83,19 +101,19 @@ class PoseDetectionModule : Module() {
 
       // 5. PoseLandmarkerResult 객체를 JS의 Record 형식으로 변환하는 확장 함수 (유틸리티)
   private fun PoseLandmarkerResult.toJSObject(): PoseResultRecord {
-      val result = PoseResultRecord()
+      var result = PoseResultRecord()
       
       // 랜드마크 데이터를 List<List<LandmarkRecord>> 구조로 변환
-      val allLandmarks = mutableListOf<List<LandmarkRecord>>()
+      var allLandmarks = mutableListOf<List<LandmarkRecord>>()
       
       this.landmarks().forEach { poseLandmarks ->
-          val personLandmarks = mutableListOf<LandmarkRecord>()
+          var personLandmarks = mutableListOf<LandmarkRecord>()
           poseLandmarks.forEach { landmark ->
               personLandmarks.add(LandmarkRecord().apply {
                   x = landmark.x().toDouble()
                   y = landmark.y().toDouble()
                   z = landmark.z().toDouble()
-                  visibility = landmark.visibility().toDouble()
+                  visibility = landmark.visibility().orElse(0.0f).toDouble()
               })
           }
           allLandmarks.add(personLandmarks)
