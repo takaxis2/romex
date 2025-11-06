@@ -23,12 +23,12 @@ const CustomHeader = ({ title, showCancel }: { title: string, showCancel?: boole
 
 export default function MediaPipeLayout() {
   return (
-    <Stack screenOptions={{ contentStyle: { backgroundColor: '#1C2C35' } }}>
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#1C2C35' } }}>
       <Stack.Screen
         name="uploader"
-        options={{
-          header: () => <CustomHeader title="사진 업로드" showCancel={true} />,
-        }}
+        // options={{
+        //   header: () => <CustomHeader title="사진 업로드" showCancel={true} />,
+        // }}
       />
       <Stack.Screen
         name="processor"

@@ -13,10 +13,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as PoseDetection from '../../modules/PoseDetectionModule/index';
+import { useMediaStore } from '../../store/useMediaStore';
 
 export default function ImageUploaderScreen() {
   // 1. 선택된 이미지 URI들을 저장할 state
   const [images, setImages] = useState<ImagePicker.ImagePickerAsset[]>([]);
+
+  const setResults = useMediaStore((state) => state.setResults);
 
   // 2. 미디어 라이브러리 권한 요청 및 실행
   const pickImages = async () => {
@@ -63,7 +66,32 @@ export default function ImageUploaderScreen() {
   // 4. 확인 버튼 (선택 완료)
   const handleConfirm = () => {
     const result = PoseDetection.default.detectPoseFromFile(images[0].uri)
-    console.log(JSON.stringify(result, null, 2))
+    console.log(images[0].uri);
+    console.log(JSON.stringify(result, null, 2));
+    let processedData
+    try {
+       processedData = images.map((img) => {
+          const result = PoseDetection.default.detectPoseFromFile(img.uri);
+          return {
+            uri: img.uri,
+            poseResult: result, // MediaPipe 결과 저장
+          };
+        })
+      
+      
+      // ⬅️ 3. URL 파라미터 대신 Zustand 스토어에 결과 저장
+      setResults(processedData);
+
+      // ⬅️ 4. 파라미터 없이 processor 화면으로 이동
+      router.push('/(mediapipe)/processor');
+
+    } catch (e) {
+      console.error("MediaPipe 처리 실패", e);
+      Alert.alert("오류", "포즈 분석에 실패했습니다.");
+    } 
+    // finally {
+    //   setIsProcessing(false); // 로딩 종료
+    // }
   };
 
   // 5. 개별 이미지 삭제
