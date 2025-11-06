@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as PoseDetection from '../modules/PoseDetectionModule/index';
+import * as PoseDetection from '../../modules/PoseDetectionModule/index';
 
 export default function ImageUploaderScreen() {
   // 1. 선택된 이미지 URI들을 저장할 state
