@@ -30,10 +30,10 @@ public class PoseDetectionModule: Module {
         // guard let context = appContext.reactDelegate?.appContext else {
         //     fatalError("Expo AppContext is not available.")
         // }
-        return initializePoseLandmarker(context: context)
+        return initializePoseLandmarker()
     }()
 
-    private func initializePoseLandmarker(context: AppContext) -> PoseLandmarker {
+    private func initializePoseLandmarker() -> PoseLandmarker {
         // assets 폴더의 모델 파일 이름. (ios/Assets/pose_landmarker_full.task 에 위치해야 하며, .podspec에 번들링되어야 함)
         let modelFileName = "pose_landmarker_full"
         let modelFileType = "task"
