@@ -6,6 +6,7 @@ import UIKit // 이미지 처리 및 파일 경로 접근에 사용됨
 
 // Kotlin의 LandmarkRecord에 대응
 public struct LandmarkRecord: Record {
+    public init(){}
     @Field public var x: Double = 0.0
     @Field public var y: Double = 0.0
     @Field public var z: Double = 0.0
@@ -15,6 +16,7 @@ public struct LandmarkRecord: Record {
 // Kotlin의 PoseResultRecord에 대응
 public struct PoseResultRecord: Record {
     // List<List<LandmarkRecord>> 는 Swift에서 [[LandmarkRecord]]로 대응됩니다.
+    public init(){}
     @Field public var landmarks: [[LandmarkRecord]] = []
 }
 
@@ -25,9 +27,9 @@ public class PoseDetectionModule: Module {
     // 3. PoseLandmarker Task를 초기화합니다. (Lazy Loading)
     // Android의 landmarker by lazy { ... } 와 동일
     private lazy var landmarker: PoseLandmarker = {
-        guard let context = appContext.reactDelegate?.appContext else {
-            fatalError("Expo AppContext is not available.")
-        }
+        // guard let context = appContext.reactDelegate?.appContext else {
+        //     fatalError("Expo AppContext is not available.")
+        // }
         return initializePoseLandmarker(context: context)
     }()
 
