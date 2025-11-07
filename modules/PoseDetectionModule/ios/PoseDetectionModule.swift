@@ -44,12 +44,14 @@ public class PoseDetectionModule: Module {
         }
         
         // 2. PoseLandmarker 옵션 설정
-        let baseOptions = BaseOptions(modelAssetPath: modelPath)
-        let options = PoseLandmarkerOptions(
-            baseOptions: baseOptions,
-            runningMode: .image, // 정지 이미지 모드
-            numPoses: 1
-        )
+        var baseOptions = BaseOptions()
+        baseOptions.modelAssetPath = modelPath
+        
+        var options = PoseLandmarkerOptions()
+            options.baseOptions = baseOptions,
+            options.runningMode = PoseLandmarkerRunningMode.image, // 정지 이미지 모드
+            options.numPoses = 1
+        
         
         // 3. PoseLandmarker 인스턴스 생성
         do {
@@ -99,17 +101,16 @@ extension PoseDetectionModule {
         var allLandmarks: [[LandmarkRecord]] = []
 
         // 감지된 사람(List)을 순회합니다.
-        result.landmarks.forEach { poseLandmarks in
-            var personLandmarks: [LandmarkRecord] = []
-            
-            // 각 관절(Landmark)을 순회합니다.
-            poseLandmarks.normalizedLandmarks.forEach { normalizedLandmark in
-                personLandmarks.append(LandmarkRecord(
+        for poseLandmarks in result.landmarks {
+            var personLandmarks: [[LandmarkRecord]] = []
+            for normalizedLandmark in poseLandmarks.normalizedLandmarks {
+                let rec = LandmarkRecord(
                     x: Double(normalizedLandmark.x),
                     y: Double(normalizedLandmark.y),
                     z: Double(normalizedLandmark.z),
-                    visibility: Double(normalizedLandmark.visibility ?? 0.0) // 가시성이 없을 경우 0.0
-                ))
+                    visibility: Double(normalizedLandmark.visibility ?? 0.0)
+                )
+                personLandmarks.append(rec)
             }
             allLandmarks.append(personLandmarks)
         }
