@@ -14,8 +14,6 @@ Pod::Spec.new do |s|
 
   s.dependency 'ExpoModulesCore'
 
-  s.dependency 'MediaPipeTasksVision'
-
   # Swift/Objective-C compatibility
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',
