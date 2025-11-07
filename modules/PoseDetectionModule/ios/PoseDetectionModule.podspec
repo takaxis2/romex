@@ -21,8 +21,14 @@ Pod::Spec.new do |s|
 
   s.source_files = "**/*.{h,m,mm,swift,hpp,cpp}"
 
+  s.exclude_files = [
+    'ios/CameraViewController.swift',
+    'ios/MediaLibraryViewController.swift',
+    'ios/PoseLandmarkerService.swift'
+  ]
+
   s.resource_bundles = {
-  'PoseDetectionModule' => ['ios/Assets/*.task', 'ios/Assets/*.tflite']
+  'PoseDetectionModule' => ['ios/Assets/*.{task,tflite}']
   # 또는 s.resources = 'ios/Assets/*'
 }
 end
