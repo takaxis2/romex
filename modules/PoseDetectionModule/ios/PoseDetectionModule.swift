@@ -11,6 +11,13 @@ public struct LandmarkRecord: Record {
     @Field public var y: Double = 0.0
     @Field public var z: Double = 0.0
     @Field public var visibility: Double = 0.0
+
+    public init(x: Double, y: Double, z: Double, visibility: Double){
+        self.x = x
+        self.y = y
+        self.z = z
+        self.visibility = visibility
+    }
 }
 
 // Kotlin의 PoseResultRecord에 대응
@@ -48,8 +55,8 @@ public class PoseDetectionModule: Module {
         baseOptions.modelAssetPath = modelPath
         
         var options = PoseLandmarkerOptions()
-            options.baseOptions = baseOptions,
-            options.runningMode = PoseLandmarkerRunningMode.image, // 정지 이미지 모드
+            options.baseOptions = baseOptions
+            options.runningMode = .image // 정지 이미지 모드
             options.numPoses = 1
         
         
@@ -102,13 +109,13 @@ extension PoseDetectionModule {
 
         // 감지된 사람(List)을 순회합니다.
         for poseLandmarks in result.landmarks {
-            var personLandmarks: [[LandmarkRecord]] = []
-            for normalizedLandmark in poseLandmarks.normalizedLandmarks {
+            var personLandmarks: [LandmarkRecord] = []
+            for nl in poseLandmarks {
                 let rec = LandmarkRecord(
-                    x: Double(normalizedLandmark.x),
-                    y: Double(normalizedLandmark.y),
-                    z: Double(normalizedLandmark.z),
-                    visibility: Double(normalizedLandmark.visibility ?? 0.0)
+                    x: Double(nl.x),
+                    y: Double(nl.y),
+                    z: Double(nl.z),
+                    visibility: Double(nl.visibility ?? 0.0)
                 )
                 personLandmarks.append(rec)
             }

@@ -9,7 +9,12 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": { 
+        "NSPhotoLibraryUsageDescription": "자세 감지 분석을 위해 사진 라이브러리에 접근하여 이미지를 선택해야 합니다.",
+        "NSCameraUsageDescription": "사용자가 직접 사진을 찍어 자세를 분석하기 위해 카메라 접근이 필요합니다.",
+        "NSPhotoLibraryAddUsageDescription": "분석된 결과를 저장하기 위해 사진 라이브러리에 저장 권한이 필요합니다."
+      }
     },
     "android": {
       "adaptiveIcon": {
