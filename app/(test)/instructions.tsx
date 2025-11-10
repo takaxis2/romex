@@ -1,6 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import { useAssets } from 'expo-asset';
 import { router } from 'expo-router';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -42,31 +41,39 @@ type ModalContentProps = {
 };
 
 const TestInputModal = ({ data, onConfirm }: ModalContentProps) => {
+  // 0점(중립)부터 시작
   const [score, setScore] = useState(0); 
   const [scoreLeft, setScoreLeft] = useState(0); 
   const [scoreRight, setScoreRight] = useState(0);
-  
+  const flatListRef = useRef<FlatList>(null);
   // 💡 스와이프 페이지 상태 (0: Left, 1: Right)
   const [currentPage, setCurrentPage] = useState(0); 
 
-  const imageAssetsToLoad = useMemo(() => {
-    if (data.inputType === 'single') {
-      return (data.images as { main: any[] }).main;
-    }
-    if (data.inputType === 'dual') {
-      const images = data.images as { left: any[]; right: any[] };
-      return [...images.left, ...images.right];
-    }
-    return [];
-  }, [data]);
+  // 💡 제스처 충돌 해결
+  const [isSliderActive, setIsSliderActive] = useState(false);
 
-  const [assets] = useAssets(imageAssetsToLoad);
+  // const imageAssetsToLoad = useMemo(() => {
+  //   if (data.inputType === 'single') {
+  //     return (data.images as { main: any[] }).main;
+  //   }
+  //   if (data.inputType === 'dual') {
+  //     const images = data.images as { left: any[]; right: any[] };
+  //     return [...images.left, ...images.right];
+  //   }
+  //   return [];
+  // }, [data]);
 
+  // const [assets] = useAssets(imageAssetsToLoad);
+
+  // 스텝이 바뀌면(data가 바뀌면) 모달의 점수도 0으로 리셋
   useEffect(() => {
     setScore(0);
     setScoreLeft(0);
     setScoreRight(0);
-    setCurrentPage(0); // 스텝이 바뀌면 모달을 0페이지(좌측)로 리셋
+    setCurrentPage(0);
+    if (flatListRef.current) {
+      flatListRef.current.scrollToIndex({ animated: false, index: 0 });
+    }
   }, [data]);
 
   const handleModalConfirm = () => {
@@ -84,23 +91,31 @@ const TestInputModal = ({ data, onConfirm }: ModalContentProps) => {
      }
   }).current;
 
-  if (!assets) {
-    return <View style={styles.modalLoadingContainer}><ActivityIndicator size="large" /></View>;
-  }
+  // if (!assets) {
+  //   return <View style={styles.modalLoadingContainer}><ActivityIndicator size="large" /></View>;
+  // }
 
   // --- 1. 싱글 슬라이더 UI (0-10점) ---
   if (data.inputType === 'single') {
-    const imageSource = assets[score];
+    // 💡 5. 올바른 데이터 구조 (data.images.main)에서 동적으로 최대값과 이미지 URI를 가져옴
+    // const images = (data.images as { main: string[] }).main;
+    const images = data.images as string[];
+    const maxScore = images.length - 1; // 0 ~ (length - 1)
+    const imageUri = images[score];
+    
     return (
-      <View>
+      <View style={styles.modalInnerContent}>
         <Text style={styles.modalTitle}>결과를 입력하세요</Text>
         <View style={styles.imageContainer}>
-          <Image source={imageSource} style={styles.image} resizeMode="contain" />
+          {/* 💡 6. Image source에 uri 직접 전달 */}
+          <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
         </View>
         <View style={styles.sliderContainer}>
           <Slider
             style={{ width: '100%', height: 40 }}
-            minimumValue={0} maximumValue={10} step={1}
+            minimumValue={0} 
+            maximumValue={maxScore} // 💡 동적 최대값
+            step={1}
             value={score} onValueChange={setScore}
             minimumTrackTintColor="#34D399"
             maximumTrackTintColor="#2E4B4F"
@@ -119,15 +134,21 @@ const TestInputModal = ({ data, onConfirm }: ModalContentProps) => {
   if (data.inputType === 'dual') {
     const pages = ['left', 'right'];
     
-    // 0~10 (Left), 11~21 (Right)
-    const leftImageSource = assets[scoreLeft]; 
-    const rightImageSource = assets[11 + scoreRight];
+    // 💡 7. 올바른 데이터 구조 (data.images) 사용
+    const images = data.images as string[];
 
-    return (
-       <View>
+    const maxScoreLeft = images.length - 1;
+    const maxScoreRight = images.length - 1;
+  
+    // 💡 8. URL을 직접 사용
+    const leftImageUri = images[scoreLeft]; 
+    const rightImageUri = images[scoreRight];
+
+    return (<View style={styles.modalInnerContent}>
         <Text style={styles.modalTitle}>결과를 입력하세요</Text>
         
         <FlatList
+          ref={flatListRef}
           data={pages}
           horizontal
           pagingEnabled
@@ -135,29 +156,40 @@ const TestInputModal = ({ data, onConfirm }: ModalContentProps) => {
           keyExtractor={(item) => item}
           onViewableItemsChanged={onViewableItemsChanged}
           viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+          // 💡 9. 제스처 충돌 해결
+          scrollEnabled={!isSliderActive}
           renderItem={({ item }) => {
             const isLeft = item === 'left';
-            
             return (
-              // 💡 각 페이지가 화면 너비를 꽉 채우도록
               <View style={styles.pageContainer}>
                 <Text style={styles.dualTitle}>{isLeft ? 'Left' : 'Right'}</Text>
                 <View style={styles.imageContainer}>
-                  <Image source={isLeft ? leftImageSource : rightImageSource} style={styles.image} resizeMode="contain" pointerEvents="none" />
+                  {/* 💡 10. Image source에 uri 직접 전달 및 'Right'일 때 좌우 반전 */}
+                  <Image 
+                    source={{ uri: isLeft ? leftImageUri : rightImageUri }} 
+                    style={[styles.image, !isLeft && styles.imageFlipped]} // ⬅️ 좌우 반전
+                    resizeMode="contain" 
+                  />
                 </View>
                 <Slider
                   style={{ width: '100%', height: 40 }}
-                  minimumValue={0} maximumValue={10} step={1}
+                  minimumValue={0} 
+                  maximumValue={isLeft ? maxScoreLeft : maxScoreRight} 
+                  step={1}
                   value={isLeft ? scoreLeft : scoreRight}
                   onValueChange={isLeft ? setScoreLeft : setScoreRight}
                   minimumTrackTintColor="#34D399"
                   maximumTrackTintColor="#2E4B4F"
                   thumbTintColor="#FFFFFF"
+                  // 💡 11. 제스처 충돌 해결
+                  onSlidingStart={() => setIsSliderActive(true)}
+                  onSlidingComplete={() => setIsSliderActive(false)}
                 />
                 <Text style={styles.scoreText}>{isLeft ? '좌' : '우'}: {isLeft ? scoreLeft : scoreRight} 점</Text>
               </View>
             );
           }}
+          style={styles.flatList}
         />
         
         {/* 💡 페이지 점(dot) 표시기 */}
@@ -204,6 +236,7 @@ export default function TestInstructionsScreen() {
 
   useEffect(() => {
     if (data?.video) {
+      console.log(data.video)
       player.replaceAsync(data.video); // 💡 replaceAsync -> replace
     }
   }, [currentStep, data, player]);
@@ -227,7 +260,7 @@ export default function TestInstructionsScreen() {
       const avgLeft = finalResults.reduce((acc, r) => acc + (r.left || 0), 0) / finalResults.length;
       
       router.replace({
-        pathname: '/test/results', // 💡 results (s 붙음)
+        pathname: '/(test)/results', // 💡 results (s 붙음)
         params: { 
           scores: JSON.stringify(finalResults),
           average: Math.round(avgLeft) 
@@ -291,6 +324,7 @@ export default function TestInstructionsScreen() {
           <Pressable style={styles.modalContent} onPress={(e) => e.stopPropagation()}>
             <View style={styles.handleBar} />
             <TestInputModal 
+              key={data.step}
               data={data} 
               onConfirm={handleConfirm} 
             />
@@ -303,101 +337,7 @@ export default function TestInstructionsScreen() {
 
 // --- 3. 스타일 (스와이프 UI 스타일 추가) ---
 const styles = StyleSheet.create({
-  // ... (헤더, safeArea, container, progressBar, title, video, instructionBox 등 기존 스타일)
-  
-  // --- 💡 듀얼 UI 스타일 ---
-  pageContainer: {
-    // 💡 모달 패딩(20)을 뺀 화면 너비
-    width: screenWidth - 40, 
-    alignItems: 'center',
-    paddingHorizontal:10,
-  },
-  dualTitle: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  imageContainerSmall: { // 듀얼 모드일 때 작은 이미지 컨테이너 (사용 안함)
-    // ...
-  },
-  modalLoadingContainer: {
-    height: 350,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  // 💡 스와이프 페이지 표시기
-  paginationContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10, // 슬라이더와 점 사이 간격
-  },
-  paginationDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#2E4B4F', // 비활성
-    marginHorizontal: 4,
-  },
-  paginationDotActive: {
-    backgroundColor: '#FFFFFF', // 활성
-  },
-
-  // --- 기존 스타일 ---
-  imageContainer: { // 싱글 모드 (및 듀얼 모드) 이미지 컨테이너
-    width: '100%',
-    height: 250, 
-    borderRadius: 16,
-    marginTop: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#2E4B4F',
-    overflow: 'hidden',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 16,
-  },
-  sliderContainer: {
-    marginTop: 20, 
-  },
-  scoreText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 12,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: '#1C2C35',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 20,
-  },
-  handleBar: {
-    width: 40,
-    height: 4,
-    backgroundColor: '#2E4B4F',
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
-  modalTitle: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
+  // 💡 헤더 스타일
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -416,6 +356,50 @@ const styles = StyleSheet.create({
     fontSize: 24,
     width: 30,
   },
+  
+  // 💡 모달 내부 컨텐츠 (패딩 적용)
+  modalInnerContent: { 
+    width: '100%',
+    paddingHorizontal: 20, 
+  },
+  // 💡 FlatList 스타일
+  flatList: {
+    height: 400, // (이미지 + 슬라이더 + 텍스트 높이)
+  },
+  // 💡 스와이프 페이지 컨테이너 스타일
+  pageContainer: {
+    width: screenWidth - 40, // ⬅️ 각 페이지 너비 = 화면 너비 - (양쪽 패딩)
+    alignItems: 'center',
+  },
+  dualTitle: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalLoadingContainer: {
+    height: 450, 
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // 💡 스와이프 페이지 표시기
+  paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10, 
+  },
+  paginationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#2E4B4F', 
+    marginHorizontal: 4,
+  },
+  paginationDotActive: {
+    backgroundColor: '#FFFFFF', 
+  },
+  // --- 기존 스타일 ---
   safeArea: { flex: 1, backgroundColor: '#1C2C35' },
   container: { flex: 1, paddingHorizontal: 16 },
   progressBarContainer: {
@@ -478,10 +462,68 @@ const styles = StyleSheet.create({
     borderRadius: 99,
     alignItems: 'center',
     marginVertical: 20,
+    marginHorizontal: 20, // ⬅️ 모달 내부 버튼용
   },
   bottomButtonText: {
     color: '#1C2C35',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  imageContainer: { // 싱글 모드 (및 듀얼 모드) 이미지 컨테이너
+    width: '100%', 
+    height: 250, 
+    borderRadius: 16,
+    marginTop: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#2E4B4F',
+    overflow: 'hidden',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 16,
+  },
+  // 💡 18. 좌우 반전 스타일 추가
+  imageFlipped: {
+    transform: [{ scaleX: -1 }],
+  },
+  sliderContainer: {
+    marginTop: 20, 
+  },
+  scoreText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 12,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#1C2C35',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 12,
+    paddingBottom: 20,
+  },
+  handleBar: {
+    width: 40,
+    height: 4,
+    backgroundColor: '#2E4B4F',
+    borderRadius: 2,
+    alignSelf: 'center', 
+    marginBottom: 20,
+  },
+  modalTitle: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+    paddingHorizontal: 20,
   },
 });

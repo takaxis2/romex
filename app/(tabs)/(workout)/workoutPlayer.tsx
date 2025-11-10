@@ -20,7 +20,13 @@ const formatTime = (millis: number) => {
 
 export default function WorkoutPlayerScreen () {
   // ----------------- ⬇️ 2. useVideoPlayer 훅 사용 -----------------
-  const player = useVideoPlayer(  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+  // const player = useVideoPlayer('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+  //   (player) => {
+  //     player.timeUpdateEventInterval = 1;
+  //     // player.play(); // 로드되면 자동 재생
+  //   }
+  // );
+  const player = useVideoPlayer('https://objectstorage.ap-seoul-1.oraclecloud.com/p/m2V8NtJ08akWVepOJdSltO7eYgufzQ5LQqdCvBdwFx1IMqlHWMzFGBzgoGxlIBah/n/cn9kuf32a2vg/b/romex-20251107-1035/o/mobility_test/neck/neck_transverse_bending.mov',
     (player) => {
       player.timeUpdateEventInterval = 1;
       // player.play(); // 로드되면 자동 재생
