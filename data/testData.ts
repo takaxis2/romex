@@ -34,7 +34,8 @@ export const TEST_DATA = [
       { text: '어깨를 바닥에 붙이고 유지합니다.', isGood: true },
       { text: '어깨를 바닥에서 들어올리지 마세요.', isGood: false },
     ],
-    images: mainImageSet,
+    images: {main : mainImageSet},
+    inputType: 'single'
   },
   // 2단계
   {
@@ -48,7 +49,8 @@ export const TEST_DATA = [
       { text: '허리를 곧게 폅니다.', isGood: true },
       { text: '어깨가 올라가지 않도록 주의합니다.', isGood: false },
     ],
-    images: mainImageSet, // (임시)
+    images: {left:mainImageSet, right:mainImageSet}, // (임시)
+    inputType: 'dual'
   },
   // 3단계
   {
@@ -61,7 +63,8 @@ export const TEST_DATA = [
       { text: '한쪽 발을 앞으로 내딛습니다.', isGood: true },
       { text: '뒤꿈치가 뜨지 않게 주의합니다.', isGood: false },
     ],
-    images: mainImageSet, // (임시)
+    images: {left:mainImageSet, right:mainImageSet}, // (임시)
+    inputType: 'dual'
   },
   // 4단계
   {
@@ -73,7 +76,8 @@ export const TEST_DATA = [
       { text: '바닥에 앉아 다리를 폅니다.', isGood: true },
       { text: '한쪽 다리를 반대편 무릎 위에 올립니다.', isGood: true },
     ],
-    images: mainImageSet, // (임시)
+    images: {main:mainImageSet}, // (임시)
+    inputType: 'single'
   },
   // 5단계
   {
@@ -86,7 +90,8 @@ export const TEST_DATA = [
       { text: '한쪽 손을 머리 뒤에 둡니다.', isGood: true },
       { text: '가슴을 활짝 엽니다.', isGood: true },
     ],
-    images: mainImageSet, // (임시)
+    images: {main:mainImageSet}, // (임시)
+    inputType: 'single'
   },
   // 6단계
   {
@@ -98,7 +103,8 @@ export const TEST_DATA = [
       { text: '바닥에 누워 한쪽 다리를 듭니다.', isGood: true },
       { text: '무릎이 굽혀지지 않게 주의합니다.', isGood: false },
     ],
-    images: mainImageSet, // (임시)
+    images: {main:mainImageSet}, // (임시)
+    inputType: 'single'
   },
   // 7단계
   {
@@ -110,7 +116,8 @@ export const TEST_DATA = [
       { text: '손바닥을 벽에 댑니다.', isGood: true },
       { text: '팔꿈치를 완전히 폅니다.', isGood: true },
     ],
-    images: mainImageSet, // (임시)
+    images: {left:mainImageSet, right:mainImageSet}, // (임시)
+    inputType: 'dual'
   },
   // 8단계
   {
@@ -122,7 +129,8 @@ export const TEST_DATA = [
       { text: '허리를 펴고 정면을 봅니다.', isGood: true },
       { text: '목을 천천히 옆으로 기울입니다.', isGood: true },
     ],
-    images: mainImageSet, // (임시)
+    images: {left:mainImageSet, right:mainImageSet}, // (임시)
+    inputType: 'dual'
   },
   // 9단계
   {
@@ -134,7 +142,8 @@ export const TEST_DATA = [
       { text: '다리를 넓게 벌리고 섭니다.', isGood: true },
       { text: '한쪽으로 무게중심을 이동합니다.', isGood: true },
     ],
-    images: mainImageSet, // (임시)
+    images: {left:mainImageSet, right:mainImageSet}, // (임시)
+    inputType: 'dual'
   },
   // 10단계
   {
@@ -147,7 +156,8 @@ export const TEST_DATA = [
       { text: '한쪽 팔을 뻗어 벽을 잡습니다.', isGood: true },
       { text: '가슴을 바닥 쪽으로 누릅니다.', isGood: true },
     ],
-    images: mainImageSet, // (임시)
+    images: {left:mainImageSet, right:mainImageSet}, // (임시)
+    inputType: 'dual'
   },
 ];
 
