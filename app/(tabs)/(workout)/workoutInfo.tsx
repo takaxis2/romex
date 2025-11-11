@@ -1,14 +1,32 @@
 // screens/WorkoutSetupScreen.tsx
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import React from 'react';
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useMemo } from 'react';
+import { ActivityIndicator, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView } from 'react-native-reanimated/lib/typescript/Animated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { exercises } from '../../../data/workoutData';
 
 
 export default function WorkoutSetupScreen(){
+
+  // 💡 2. params로 "열쇠(ID)"를 받습니다.
+  const { exerciseId } = useLocalSearchParams();
+
+  // 💡 3. 열쇠로 "데이터 창고"에서 실제 데이터를 찾습니다.
+  const exercise = useMemo(() => {
+    // (실제 앱에서는 API 호출이 될 수 있습니다)
+    return exercises.find(e => e.id === exerciseId);
+  }, [exerciseId]);
+
+  if (!exercise) {
+    // ID에 해당하는 데이터가 없거나 로딩 중
+    return <ActivityIndicator />;
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
+      <ScrollView>
       <View style={styles.container}>
         {/* --- Custom Header --- */}
         <View style={styles.header}>
@@ -51,10 +69,14 @@ export default function WorkoutSetupScreen(){
         </View>
 
         {/* --- 하단 버튼 --- */}
-        <TouchableOpacity style={styles.letsGoButton} onPress={() => router.push('/workoutSetup')}>
+        <TouchableOpacity style={styles.letsGoButton} onPress={() => router.push({
+              pathname: '/(tabs)/(workout)/workoutSetup',
+              params: { exerciseId: exerciseId }
+            })}>
           <Text style={styles.letsGoButtonText}>Let's go !</Text>
         </TouchableOpacity>
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 // ----------------- ⬇️ 1. Import 변경 -----------------
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { exercises } from '../../../data/workoutData';
 
 // 밀리초를 mm:ss 형식으로 변환하는 함수 (동일)
 const formatTime = (millis: number) => {
@@ -19,6 +20,13 @@ const formatTime = (millis: number) => {
 };
 
 export default function WorkoutPlayerScreen () {
+
+  const { exerciseId } = useLocalSearchParams();
+  const exercise = useMemo(() => {
+      // (실제 앱에서는 API 호출이 될 수 있습니다)
+      return exercises.find(e => e.id === exerciseId);
+    }, [exerciseId]);
+
   // ----------------- ⬇️ 2. useVideoPlayer 훅 사용 -----------------
   // const player = useVideoPlayer('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
   //   (player) => {
@@ -77,7 +85,7 @@ export default function WorkoutPlayerScreen () {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.instructionScroll}>
             {/* ... 운동 설명 카드 (이전과 동일) ... */}
             <View style={styles.instructionCard}>
-                <Text style={styles.instructionTitle}>Hip Streching</Text>
+                <Text style={styles.instructionTitle}>Hip Streching {exercise?.title}</Text>
                 <Text style={styles.instructionText}>1. 바닥에 앉은 자세에서 다리를 뻗습니다.</Text>
                 <Text style={styles.instructionText}>2. 무릎을 90도 구부린 채 유지합니다.</Text>
                 <Text style={styles.instructionNote}>*주의 사항*</Text>

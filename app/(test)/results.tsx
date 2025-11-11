@@ -1,7 +1,9 @@
+import BodyOutline from '@/components/BodyOutline';
+import { useTestStore } from '@/store/useTestStore';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import { router, useLocalSearchParams } from 'expo-router';
-import React from 'react';
+import { router } from 'expo-router';
+import React, { useMemo } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Circle, Svg } from 'react-native-svg';
@@ -69,7 +71,9 @@ const AnalysisCard = ({ scores }: { scores: number[] }) => {
     <View style={[styles.card, { padding: 10 }]}>
       <Text style={styles.cardTitle}>상세 분석</Text>
       <View style={styles.bodyContainer}>
-        <Ionicons name="body" size={150} color="rgba(255,255,255,0.7)" />
+        {/* <Ionicons name="body" size={150} color="rgba(255,255,255,0.7)" /> */}
+        <BodyOutline />
+        {/* <Body gender='male' side='front' scale={0.45} data={[]}/> */}
         {/* 점수 위치는 이미지에 맞춰 임의로 조정 */}
         <Text style={[styles.bodyScore, { top: 10, right: 30 }]}>{scoreMap[1].score}점</Text>
         <Text style={[styles.bodyScore, { top: 40, right: 20 }]}>{scoreMap[0].score}점</Text>
@@ -124,12 +128,38 @@ const GraphCard = ({ scores }: { scores: number[] }) => {
 
 
 export default function TestResultScreen() {
-  // 1. URL 파라미터에서 점수 데이터 받기
-  const { scores, average } = useLocalSearchParams();
+  // ⬅️ 2. URL 파라미터 대신 Zustand 스토어에서 데이터를 직접 가져옴
+  const results = useTestStore((state) => state.results);
+  const clearResults = useTestStore((state) => state.clearResults);
   
-  const avgScore = Number(average as string) || 0;
-  // 문자열 "7,8,5" -> 숫자 배열 [7, 8, 5]
-  const scoreList = (scores as string)?.split(',').map(Number) || [];
+  // ⬅️ 3. 스토어의 results 배열로 평균 점수 계산
+  const avgScore = useMemo(() => {
+    if (results.length === 0) return 0;
+    // 'single'은 left, 'dual'은 left/right 평균을 사용
+    const totalScore = results.reduce((acc, r) => {
+      if (r.right !== null) {
+        return acc + ((r.left || 0) + r.right) / 2;
+      }
+      return acc + (r.left || 0);
+    }, 0);
+    return Math.round(totalScore / results.length) * 10; // (10점 만점 -> 100점)
+  }, [results]);
+
+  // ⬅️ 4. 점수 리스트 (10점 만점)
+  const scoreList = useMemo(() => {
+    return results.map(r => r.left || 0); // (임시로 left 점수만 사용)
+  }, [results]);
+
+  // ⬅️ 5. (중요) 화면을 나갈 때 스토어를 비우는 로직
+  const handleDone = () => {
+    clearResults();
+    router.replace('/(tabs)'); // 탭 홈으로 이동
+  };
+
+  const handleRedo = () => {
+    clearResults();
+    router.replace('/(test)/instructions'); // 테스트 1단계로 이동
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -145,21 +175,32 @@ export default function TestResultScreen() {
 
         {/* --- 상단 2개 카드 --- */}
         <View style={styles.cardRow}>
-          <AverageCard average={avgScore} />
+          <AverageCard average={avgScore/10} />
           <AnalysisCard scores={scoreList} />
         </View>
 
         {/* --- 하단 그래프 카드 --- */}
         <GraphCard scores={scoreList} />
 
-        {/* --- 재평가 버튼 --- */}
-        <TouchableOpacity 
-          style={styles.bottomButton} 
-          // 1단계로 돌아가기 (replace로 현재 화면을 스택에서 제거)
-          onPress={() => router.replace('/(test)/instructions')} 
-        >
-          <Text style={styles.bottomButtonText}>재평가 하기</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonRow}>
+          {/* --- 재평가 버튼 --- */}
+          <TouchableOpacity 
+            style={[styles.bottomButton, styles.redoButton]} 
+            // 1단계로 돌아가기 (replace로 현재 화면을 스택에서 제거)
+            onPress={handleRedo} 
+            >
+            <Text style={styles.bottomButtonText}>재평가 하기</Text>
+          </TouchableOpacity>
+
+          {/* --- 💡 완료 버튼 (clear + done) --- */}
+          <TouchableOpacity 
+            style={[styles.bottomButton, styles.doneButton]} // ⬅️ 완료 버튼 스타일
+            onPress={handleDone} 
+            >
+            <Text style={styles.doneButtonText}>완료</Text>
+          </TouchableOpacity>
+        </View>
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -269,13 +310,36 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 4,
   },
-  // 재평가 버튼
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // 양쪽으로 붙임
+    marginTop: 20,
+  },
   bottomButton: {
-    backgroundColor: '#4A90E2', // 파란색
+    width: '48.5%', // ⬅️ 절반보다 약간 작게 (간격)
     paddingVertical: 18,
     borderRadius: 12,
     alignItems: 'center',
-    marginVertical: 20,
+    // marginTop: 20, // ⬅️ 삭제 (buttonRow가 처리)
+  },
+  redoButton: {
+    backgroundColor: '#4A90E2', // 파란색
+  },
+  redoButtonText: { // ⬅️ (기존 bottomButtonText)
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+
+  // 💡 4. 완료 버튼 스타일 (마진 제거)
+  doneButton: {
+    backgroundColor: '#34D399', // 초록색
+    // marginTop: 10, // ⬅️ 삭제
+  },
+  doneButtonText: {
+    color: 'white', // 어두운 글씨
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   bottomButtonText: {
     color: 'white',

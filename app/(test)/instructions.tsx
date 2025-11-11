@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -7,7 +8,6 @@ import {
   ActivityIndicator, // ⬅️ 1. FlatList import
   Dimensions,
   FlatList,
-  Image,
   Modal,
   Pressable,
   StyleSheet,
@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TEST_DATA, TOTAL_TEST_STEPS } from '../../data/testData';
+import { useTestStore } from '../../store/useTestStore';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -108,7 +109,7 @@ const TestInputModal = ({ data, onConfirm }: ModalContentProps) => {
         <Text style={styles.modalTitle}>결과를 입력하세요</Text>
         <View style={styles.imageContainer}>
           {/* 💡 6. Image source에 uri 직접 전달 */}
-          <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
+          <Image source={{ uri: imageUri }} style={styles.image} contentFit='contain' />
         </View>
         <View style={styles.sliderContainer}>
           <Slider
@@ -168,7 +169,7 @@ const TestInputModal = ({ data, onConfirm }: ModalContentProps) => {
                   <Image 
                     source={{ uri: isLeft ? leftImageUri : rightImageUri }} 
                     style={[styles.image, !isLeft && styles.imageFlipped]} // ⬅️ 좌우 반전
-                    resizeMode="contain" 
+                    contentFit="contain" 
                   />
                 </View>
                 <Slider
@@ -223,13 +224,41 @@ const CustomHeader = ({ onBackPress }: { onBackPress: () => void }) => (
 export default function TestInstructionsScreen() {
   const [currentStep, setCurrentStep] = useState(1);
   const [modalVisible, setModalVisible] = useState(false);
-  const [results, setResults] = useState<{ left: number | null; right: number | null }[]>([]);
+  // const [results, setResults] = useState<{ left: number | null; right: number | null }[]>([]);
+
+  const addResult = useTestStore((state) => state.addResult);
+  const clearResults = useTestStore((state) => state.clearResults);
 
   const data = useMemo(() => {
     return TEST_DATA.find(d => d.step === currentStep);
   }, [currentStep]);
 
-  const player = useVideoPlayer(data?.video, (player) => {
+  // 💡 5. (신규) 화면 마운트 시 모든 테스트 이미지 pre-fetch
+  useEffect(() => {
+    // 이 useEffect는 화면이 처음 마운트될 때 한 번만 실행됩니다.
+    console.log('[ImagePrefetch] 테스트 이미지 사전 로드를 시작합니다...');
+    
+    // 1. testData에서 모든 이미지 URL 수집
+    //  inputType에 상관없이 'images' 배열을 펼쳐서 합칩니다.
+    const allImageUrls: string[] = TEST_DATA.flatMap(test => 
+      test.images as string[]
+    );
+
+    // 2. 유효한 URL만 필터링 (http/https)
+    const validUrls = allImageUrls.filter(url => url && url.startsWith('http'));
+
+    // 3. expo-image로 prefetch 실행
+    Image.prefetch(validUrls)
+      .then(() => {
+        console.log(`[ImagePrefetch] ${validUrls.length}개의 이미지 로드 완료.`);
+      })
+      .catch(e => {
+        console.warn('[ImagePrefetch] 이미지 로드 실패:', e);
+      });
+
+  }, []);
+
+  const player = useVideoPlayer(data!.video, (player) => {
     player.loop = true;
     player.play();
   });
@@ -247,24 +276,30 @@ export default function TestInstructionsScreen() {
     } else if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     } else {
+      clearResults();
       router.back();
     }
   };
 
   const handleConfirm = (result: { left: number | null; right: number | null }) => {
-    setResults(prevResults => [...prevResults, result]);
+    // setResults(prevResults => [...prevResults, result]);
+    addResult({
+      step: currentStep,
+      title: data!.title, // ⬅️ 나중에 결과 화면에서 제목을 쓰기 위해 함께 저장
+      ...result,
+    });
     setModalVisible(false);
 
     if (currentStep === TOTAL_TEST_STEPS) {
-      const finalResults = [...results, result];
-      const avgLeft = finalResults.reduce((acc, r) => acc + (r.left || 0), 0) / finalResults.length;
+      // const finalResults = [...results, result];
+      // const avgLeft = finalResults.reduce((acc, r) => acc + (r.left || 0), 0) / finalResults.length;
       
       router.replace({
         pathname: '/(test)/results', // 💡 results (s 붙음)
-        params: { 
-          scores: JSON.stringify(finalResults),
-          average: Math.round(avgLeft) 
-        }
+        // params: { 
+        //   scores: JSON.stringify(finalResults),
+        //   average: Math.round(avgLeft) 
+        // }
       });
     } else {
       setCurrentStep(currentStep + 1);

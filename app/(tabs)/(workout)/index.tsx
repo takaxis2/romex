@@ -12,7 +12,7 @@ import { exercises } from '../../../data/workoutData';
 const ExerciseCard = ({ item }: { item: typeof exercises[0] }) => (
   <TouchableOpacity style={styles.card} onPress={() => router.push({
               pathname: '/workoutInfo',
-              params: { categoryTitle: item.title }
+              params: { exerciseId: item.id }
             })}>
     <Image source={{ uri: item.image }} style={styles.cardImage} />
     <View style={styles.cardTextContainer}>

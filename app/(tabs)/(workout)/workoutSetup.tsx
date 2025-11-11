@@ -1,6 +1,6 @@
 // screens/WorkoutTimeSelectionScreen.tsx
 import { Ionicons } from '@expo/vector-icons';
-import { router, useNavigation } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +9,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function WorkoutTimeSelectionScreen(){
   const [selectedTime, setSelectedTime] = useState(8);
   const navigation = useNavigation();
+
+  // 💡 2. params로 "열쇠(ID)"를 받습니다.
+  const { exerciseId } = useLocalSearchParams();
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove',(e)=>{
@@ -66,7 +69,10 @@ export default function WorkoutTimeSelectionScreen(){
             style={[styles.timeButton, selectedTime === option.time && styles.selectedTimeButton]}
             onPress={() => {
               setSelectedTime(option.time);
-              router.push("/(tabs)/(workout)/workoutPlayer"); // 선택 후 바로 재생 화면으로
+              router.push({
+                pathname:'/(tabs)/(workout)/workoutPlayer',
+                params: { exerciseId: exerciseId }
+              }); // 선택 후 바로 재생 화면으로
             }}
           >
             <Text style={styles.timeText}>{option.time} min</Text>

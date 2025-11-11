@@ -41,11 +41,6 @@ export const TEST_DATA = [
       process.env.EXPO_PUBLIC_RESOURCE_URL+'mobility_test/neck/3.png',
       process.env.EXPO_PUBLIC_RESOURCE_URL+'mobility_test/neck/4.png',
       process.env.EXPO_PUBLIC_RESOURCE_URL+'mobility_test/neck/5.png',
-      process.env.EXPO_PUBLIC_RESOURCE_URL+'mobility_test/neck/6.png',
-      process.env.EXPO_PUBLIC_RESOURCE_URL+'mobility_test/neck/7.png',
-      process.env.EXPO_PUBLIC_RESOURCE_URL+'mobility_test/neck/8.png',
-      process.env.EXPO_PUBLIC_RESOURCE_URL+'mobility_test/neck/9.png',
-      process.env.EXPO_PUBLIC_RESOURCE_URL+'mobility_test/neck/10.png',
     ],
     inputType: 'dual'
   },
