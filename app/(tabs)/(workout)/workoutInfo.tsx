@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
 import { ActivityIndicator, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ScrollView } from 'react-native-reanimated/lib/typescript/Animated';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { exercises } from '../../../data/workoutData';
 
 
@@ -24,8 +24,8 @@ export default function WorkoutSetupScreen(){
   }
 
   return (
-    // <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea}>
+      {/* <ScrollView style={styles.safeArea}> */}
       <View style={styles.container}>
         {/* --- Custom Header --- */}
         <View style={styles.header}>
@@ -75,8 +75,8 @@ export default function WorkoutSetupScreen(){
           <Text style={styles.letsGoButtonText}>Let's go !</Text>
         </TouchableOpacity>
       </View>
-      </ScrollView>
-    // </SafeAreaView>
+      {/* </ScrollView> */}
+     </SafeAreaView>
   );
 };
 

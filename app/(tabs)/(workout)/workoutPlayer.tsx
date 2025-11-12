@@ -34,7 +34,7 @@ export default function WorkoutPlayerScreen () {
   //     // player.play(); // 로드되면 자동 재생
   //   }
   // );
-  const player = useVideoPlayer('https://objectstorage.ap-seoul-1.oraclecloud.com/p/m2V8NtJ08akWVepOJdSltO7eYgufzQ5LQqdCvBdwFx1IMqlHWMzFGBzgoGxlIBah/n/cn9kuf32a2vg/b/romex-20251107-1035/o/mobility_test/neck/neck_transverse_bending.mov',
+  const player = useVideoPlayer(exercise!.video_url,
     (player) => {
       player.timeUpdateEventInterval = 1;
       // player.play(); // 로드되면 자동 재생
